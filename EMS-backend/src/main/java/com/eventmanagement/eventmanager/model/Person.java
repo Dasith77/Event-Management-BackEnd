@@ -42,6 +42,15 @@ public class Person implements UserDetails {
         this.password = password;
     }
 
+    public Person(long id, String firstname, String lastname, String email, String password, Role role) {
+        this.id = id;
+        this.firstname = firstname;
+        this.lastname = lastname;
+        this.email = email;
+        this.password = password;
+        this.role = role;
+    }
+
     public long getId() {
         return id;
     }
@@ -72,6 +81,14 @@ public class Person implements UserDetails {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public Role getRole() {
+        return role;
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
     }
 
     @Override
