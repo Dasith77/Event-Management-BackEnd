@@ -19,9 +19,10 @@ public class ApplicationConfig {
 
     private final PersonRepo personRepo;
 
-    private ApplicationConfig(PersonRepo personRepo){
+    public ApplicationConfig(PersonRepo personRepo){
         this.personRepo = personRepo;
     }
+
 
     @Bean
     public UserDetailsService userDetailsService(){
@@ -43,7 +44,7 @@ public class ApplicationConfig {
     }
 
     @Bean
-    private PasswordEncoder passwordEncoder() {
+    public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 

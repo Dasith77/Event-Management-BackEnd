@@ -1,5 +1,6 @@
 package com.eventmanagement.eventmanager.service;
 
+import com.eventmanagement.eventmanager.model.Person;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -18,7 +19,8 @@ import java.util.function.Function;
 @Service
 public class JwtService {
 
-    private static final String SECRET_KEY = "A7AD29BCB91281DF72C84FD71756F";
+    private static final SignatureAlgorithm SIGNATURE_ALGORITHM = SignatureAlgorithm.HS256;
+    private static final String SECRET_KEY = Base64.getEncoder().encodeToString(Keys.secretKeyFor(SIGNATURE_ALGORITHM).getEncoded());
 
     public String extractUsername(String token) {
         return extractClaim(token,Claims::getSubject);
@@ -29,12 +31,16 @@ public class JwtService {
         return claimsResolver.apply(claims);
     }
 
-    public String generateToken(UserDetails userDetails){
-        return generateToken(new HashMap<>(),userDetails);
+    public String extractUserRole(String token) {
+        return extractClaim(token, claims -> claims.get("role", String.class));
     }
 
-    public String generateToken(Map<String,Object> extraClaims, UserDetails userDetails){
-        return Jwts.builder().setClaims(extraClaims).setSubject(userDetails.getUsername()).
+    public String generateToken(Person person){
+        return generateToken(new HashMap<>(),person);
+    }
+
+    public String generateToken(Map<String,Object> extraClaims, Person person){
+        return Jwts.builder().setClaims(extraClaims).setSubject(person.getUsername()).claim("role",person.getRole()).
                 setIssuedAt(new Date(System.currentTimeMillis())).
                 setExpiration(new Date(System.currentTimeMillis()+1000*60*24)).
                 signWith(getSignInKey(), SignatureAlgorithm.HS256).

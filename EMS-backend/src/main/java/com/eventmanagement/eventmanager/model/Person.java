@@ -83,6 +83,7 @@ public class Person implements UserDetails {
         this.email = email;
     }
 
+
     public Role getRole() {
         return role;
     }

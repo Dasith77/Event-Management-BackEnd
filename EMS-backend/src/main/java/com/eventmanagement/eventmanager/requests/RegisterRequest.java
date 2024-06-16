@@ -1,5 +1,7 @@
 package com.eventmanagement.eventmanager.requests;
 
+import com.eventmanagement.eventmanager.model.enums.Role;
+
 import java.util.Objects;
 
 public class RegisterRequest {
@@ -7,17 +9,19 @@ public class RegisterRequest {
     private String lastname;
     private String email;
     private String password;
+    private Role role;
 
     // No-args constructor
     public RegisterRequest() {
     }
 
     // All-args constructor
-    public RegisterRequest(String firstname, String lastname, String email, String password) {
+    public RegisterRequest(String firstname, String lastname, String email, String password, Role role) {
         this.firstname = firstname;
         this.lastname = lastname;
         this.email = email;
         this.password = password;
+        this.role = role;
     }
 
     // Getters and Setters
@@ -53,12 +57,21 @@ public class RegisterRequest {
         this.password = password;
     }
 
+    public Role getRole() {
+        return role;
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
+    }
+
     // Builder class
     public static class Builder {
         private String firstname;
         private String lastname;
         private String email;
         private String password;
+        private Role role;
 
         public Builder() {
         }
@@ -83,8 +96,13 @@ public class RegisterRequest {
             return this;
         }
 
+        public Builder role(Role role) {
+            this.role = role;
+            return this;
+        }
+
         public RegisterRequest build() {
-            return new RegisterRequest(this.firstname, this.lastname, this.email, this.password);
+            return new RegisterRequest(this.firstname, this.lastname, this.email, this.password, this.role);
         }
     }
 
@@ -96,6 +114,7 @@ public class RegisterRequest {
                 ", lastname='" + lastname + '\'' +
                 ", email='" + email + '\'' +
                 ", password='" + password + '\'' +
+                ", role=" + role +
                 '}';
     }
 
@@ -109,7 +128,8 @@ public class RegisterRequest {
         if (!Objects.equals(firstname, that.firstname)) return false;
         if (!Objects.equals(lastname, that.lastname)) return false;
         if (!Objects.equals(email, that.email)) return false;
-        return Objects.equals(password, that.password);
+        if (!Objects.equals(password, that.password)) return false;
+        return role == that.role;
     }
 
     @Override
@@ -118,6 +138,7 @@ public class RegisterRequest {
         result = 31 * result + (lastname != null ? lastname.hashCode() : 0);
         result = 31 * result + (email != null ? email.hashCode() : 0);
         result = 31 * result + (password != null ? password.hashCode() : 0);
+        result = 31 * result + (role != null ? role.hashCode() : 0);
         return result;
     }
 }
