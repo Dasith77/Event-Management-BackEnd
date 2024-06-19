@@ -12,5 +12,7 @@ public interface EventCategoryRepo extends JpaRepository<EventCategory,Long> {
     @Query("SELECT ec.event.id FROM EventCategory ec WHERE ec.category.id = :categoryId")
     List<Long> findEventIdsByCategoryId(@Param("categoryId") Long categoryId);
 
+    @Query("SELECT ec FROM EventCategory ec WHERE ec.event.id = :eventId")
+    List<EventCategory> findByEventId(@Param("eventId") Long eventId);
 
 }

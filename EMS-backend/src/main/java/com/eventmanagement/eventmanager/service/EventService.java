@@ -4,6 +4,7 @@ import com.eventmanagement.eventmanager.exception.EventNotFoundException;
 import com.eventmanagement.eventmanager.model.Category;
 import com.eventmanagement.eventmanager.model.Event;
 import com.eventmanagement.eventmanager.model.EventCategory;
+import com.eventmanagement.eventmanager.model.wrapper.CategoryWithScore;
 import com.eventmanagement.eventmanager.model.wrapper.EventWrapper;
 import com.eventmanagement.eventmanager.repo.CategoryRepo;
 import com.eventmanagement.eventmanager.repo.EventCategoryRepo;
@@ -41,12 +42,15 @@ public class EventService {
         // First, save the event to ensure it has an ID
         Event event = eventRepo.save(eventWrapper.getEvent());
 
-        List<Category> categories = eventWrapper.getCategoryList();
-        for (Category category : categories) {
-            if (categoryService.doesCategoryExist(category.getId())) {
+        List<CategoryWithScore> categoriesWithScores = eventWrapper.getCategoryWithScoreList();
+
+        for (CategoryWithScore categoryWithScore : categoriesWithScores) {
+            Category category = categoryRepo.findCategoryByKey(categoryWithScore.getCategoryKey());
+            if (category != null) {
                 EventCategory eventCategory = new EventCategory();
                 eventCategory.setCategory(category);
                 eventCategory.setEvent(event);
+                eventCategory.setScore(categoryWithScore.getScore());
                 eventCategoryRepo.save(eventCategory);
             }
         }

@@ -7,14 +7,14 @@ import java.util.List;
 
 public class EventWrapper {
     private Event event;
-    private List<Category> categoryList;
+    private List<CategoryWithScore> categoryWithScoreList;
 
     public EventWrapper() {
     }
 
-    public EventWrapper(Event event, List<Category> categoryList) {
+    public EventWrapper(List<CategoryWithScore> categoryWithScoreList, Event event) {
+        this.categoryWithScoreList = categoryWithScoreList;
         this.event = event;
-        this.categoryList = categoryList;
     }
 
     public Event getEvent() {
@@ -25,11 +25,11 @@ public class EventWrapper {
         this.event = event;
     }
 
-    public List<Category> getCategoryList() {
-        return categoryList;
+    public List<CategoryWithScore> getCategoryWithScoreList() {
+        return categoryWithScoreList;
     }
 
-    public void setCategoryList(List<Category> categoryList) {
-        this.categoryList = categoryList;
+    public void setCategoryWithScoreList(List<CategoryWithScore> categoryWithScoreList) {
+        this.categoryWithScoreList = categoryWithScoreList;
     }
 }

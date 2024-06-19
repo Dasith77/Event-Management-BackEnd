@@ -25,14 +25,16 @@ public class EventCategory {
     @ManyToOne
     @JoinColumn(name = "categoryId",referencedColumnName = "id")
     private Category category;
+    private Integer score;
 
     public EventCategory() {
     }
 
-    public EventCategory(long id, Event event, Category category) {
+    public EventCategory(long id, Event event, Category category, Integer score) {
         this.id = id;
         this.event = event;
         this.category = category;
+        this.score = score;
     }
 
     public long getId() {
@@ -59,6 +61,11 @@ public class EventCategory {
         this.category = category;
     }
 
+    public Integer getScore() {
+        return score;
+    }
 
-
+    public void setScore(Integer score) {
+        this.score = score;
+    }
 }
