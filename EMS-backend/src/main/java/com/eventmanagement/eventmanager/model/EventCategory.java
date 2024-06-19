@@ -1,5 +1,8 @@
 package com.eventmanagement.eventmanager.model;
 import jakarta.persistence.*;
+
+import java.util.Objects;
+
 @Entity
 @Table
 public class EventCategory {
@@ -55,4 +58,7 @@ public class EventCategory {
     public void setCategory(Category category) {
         this.category = category;
     }
+
+
+
 }

@@ -57,6 +57,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                             new WebAuthenticationDetailsSource().buildDetails(request)
                     );
                     SecurityContextHolder.getContext().setAuthentication(authToken);
+
+                    if("ADMIN".equals(role)) {
+                        // Allow access to admin endpoints
+                    } else if("NORMAL_USER".equals(role)) {
+                        // Allow access to normal user endpoints
+                    } else {
+                        // Handle unknown role
+                    }
                 }
             }
             filterChain.doFilter(request,response);

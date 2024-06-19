@@ -5,6 +5,7 @@ import com.eventmanagement.eventmanager.model.Category;
 import com.eventmanagement.eventmanager.model.Event;
 import com.eventmanagement.eventmanager.model.EventCategory;
 import com.eventmanagement.eventmanager.model.wrapper.EventWrapper;
+import com.eventmanagement.eventmanager.repo.CategoryRepo;
 import com.eventmanagement.eventmanager.repo.EventCategoryRepo;
 import com.eventmanagement.eventmanager.repo.EventRepo;
 import jakarta.transaction.Transactional;
@@ -12,7 +13,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class EventService {
@@ -23,10 +27,13 @@ public class EventService {
     @Autowired
     private final EventCategoryRepo eventCategoryRepo;
     @Autowired
-    public EventService(EventRepo eventRepo, CategoryService categoryService, EventCategoryRepo eventCategoryRepo) {
+    private final CategoryRepo categoryRepo;
+    @Autowired
+    public EventService(EventRepo eventRepo, CategoryService categoryService, EventCategoryRepo eventCategoryRepo, CategoryRepo categoryRepo) {
         this.eventRepo = eventRepo;
         this.categoryService = categoryService;
         this.eventCategoryRepo = eventCategoryRepo;
+        this.categoryRepo = categoryRepo;
     }
 
     @Transactional
@@ -46,6 +53,10 @@ public class EventService {
         return event;
     }
 
+    public List<Optional<Event>> serachEventsByStartDate(LocalDate date){
+        return eventRepo.findByStartDate(date);
+    }
+
     public List<Event> findAllEvents(){
         return eventRepo.findAll();
     }
@@ -56,6 +67,22 @@ public class EventService {
 
     public Event findEventById(Long id){
         return eventRepo.findEventById(id).orElseThrow(()-> new EventNotFoundException("Event "+id+" not found"));
+    }
+
+    public List<Optional<Event>> searchEventsByStartDateAndCategory(LocalDate startDate, String categoryKey) {
+        List<Optional<Event>> eventsByDate = eventRepo.findByStartDate(startDate);
+        Category category = categoryRepo.findCategoryByKey(categoryKey);
+        List<Long> eventIdsForCategory = eventCategoryRepo.findEventIdsByCategoryId(category.getId());
+        List<Optional<Event>> eventsOnCategory = new ArrayList<>();
+        for(Long eventId : eventIdsForCategory){
+            Optional<Event> tempEvent = eventRepo.findEventById(eventId);
+            eventsOnCategory.add(tempEvent);
+        }
+        List<Optional<Event>> commonEvents = eventsByDate.stream()
+                .filter(eventsOnCategory::contains)
+                .collect(Collectors.toList());
+
+        return commonEvents;
     }
 
     public void deleteEvent(Long id){
