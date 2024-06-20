@@ -1,9 +1,6 @@
 package com.eventmanagement.eventmanager.service;
 
-import com.eventmanagement.eventmanager.model.Event;
-import com.eventmanagement.eventmanager.model.EventBucket;
-import com.eventmanagement.eventmanager.model.EventCategory;
-import com.eventmanagement.eventmanager.model.Interest;
+import com.eventmanagement.eventmanager.model.*;
 import com.eventmanagement.eventmanager.model.wrapper.CategoryWithScore;
 import com.eventmanagement.eventmanager.model.wrapper.EventWrapper;
 import com.eventmanagement.eventmanager.repo.EventBucketRepo;
@@ -21,10 +18,13 @@ public class UserInterestsExtractionService {
     private final EventBucketRepo eventBucketRepo;
     @Autowired
     private final EventCategoryRepo eventCategoryRepo;
+    @Autowired
+    private final CategoryService categoryService;
 
-    public UserInterestsExtractionService(EventBucketRepo eventBucketRepo, EventCategoryRepo eventCategoryRepo) {
+    public UserInterestsExtractionService(EventBucketRepo eventBucketRepo, EventCategoryRepo eventCategoryRepo, CategoryService categoryService) {
         this.eventBucketRepo = eventBucketRepo;
         this.eventCategoryRepo = eventCategoryRepo;
+        this.categoryService = categoryService;
     }
 
     public Interest ExtractUserInterests(Long userId){
@@ -46,8 +46,47 @@ public class UserInterestsExtractionService {
 
             eventWrappers.add(eventWrapper);
         }
+        List<List<Integer>> eventCategoryMatrix = getEventCategoryMatrix(eventWrappers);
+
+
+
+
+
+
+
+
         System.out.println("================================");
         System.out.println(eventWrappers);
         return null;
     }
+
+    public List<List<Integer>> getEventCategoryMatrix(List<EventWrapper> eventWrappers){
+        List<List<Integer>> eventCategoryMatrix = new ArrayList<>();
+        List<Category> allCategories = categoryService.findAllCategories();
+        Integer numOfCategories = allCategories.size();
+        for(EventWrapper eventWrapper:eventWrappers){
+            List<CategoryWithScore> categoryWithScoreList = eventWrapper.getCategoryWithScoreList();
+            List<Integer> tempScoreList = new ArrayList<>();
+            for (Category category : allCategories) {
+                String categoryKey = category.getCategoryKey();
+                boolean found = false;
+                for (CategoryWithScore categoryWithScore : categoryWithScoreList) {
+                    if (categoryWithScore.getCategoryKey().equals(categoryKey)) {
+                        tempScoreList.add(categoryWithScore.getScore());
+                        found = true;
+                        break;
+                    }
+                }
+                if (!found) {
+                    tempScoreList.add(0);
+                }
+            }
+            eventCategoryMatrix.add(tempScoreList);
+        }
+        return eventCategoryMatrix;
+    }
+
+
+
+
 }
